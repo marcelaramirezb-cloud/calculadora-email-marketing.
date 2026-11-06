@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#641b32">
+<title>Calculadora de métricas de email marketing</title>
+<style>
+:root{
+  --vino:#641b32; --vino-oscuro:#421222; --naranja:#f28c28;
+  --fondo:#fff8f4; --texto:#2c2024; --muted:#74666b; --borde:#eadde0;
+  --verde:#218653; --amarillo:#b77910; --rojo:#c33b43;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--texto);font-family:Arial,Helvetica,sans-serif;line-height:1.45}
+header{background:linear-gradient(120deg,var(--vino-oscuro),var(--vino));color:#fff;padding:28px 18px 30px}
+.wrap{width:min(100% - 28px,1050px);margin:auto}
+h1{font-size:clamp(1.55rem,5vw,2.25rem);line-height:1.15;margin:0 0 9px}
+header p{margin:0;color:#f6e9ed;max-width:720px}
+main{padding:22px 0 40px}
+.notice{background:#fff0df;border:1px solid #f4c58f;border-left:5px solid var(--naranja);padding:12px 14px;border-radius:10px;margin-bottom:18px;font-size:.93rem}
+.panel{background:#fff;border:1px solid var(--borde);border-radius:16px;padding:18px;margin-bottom:18px;box-shadow:0 5px 18px rgba(66,18,34,.045)}
+h2{font-size:1.18rem;color:var(--vino);margin:0 0 14px}
+h3{font-size:1rem;margin:0 0 8px;color:var(--vino)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.field label{display:block;font-weight:700;font-size:.9rem;margin-bottom:6px}
+.field input{width:100%;min-height:46px;padding:10px 11px;border:1px solid #d9c9ce;border-radius:9px;font-size:1rem;color:var(--texto);background:#fff}
+.field input:focus{outline:3px solid #f8d5b5;border-color:var(--naranja)}
+.hint{font-size:.78rem;color:var(--muted);margin-top:4px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+button{border:0;border-radius:10px;padding:12px 16px;font-weight:700;font-size:.95rem;cursor:pointer}
+.primary{background:var(--vino);color:#fff}
+.secondary{background:#fff0df;color:var(--vino);border:1px solid #f2c18b}
+button:focus-visible{outline:3px solid var(--naranja);outline-offset:2px}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.metric{border:1px solid var(--borde);border-radius:13px;padding:14px;background:#fff;min-width:0}
+.metric-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.metric-value{font-size:1.7rem;font-weight:800;color:var(--vino);margin:8px 0 2px;overflow-wrap:anywhere}
+.status{font-size:.75rem;font-weight:800;padding:5px 9px;border-radius:20px;white-space:nowrap}
+.green{background:#e3f4eb;color:#17643d}.yellow{background:#fff2d7;color:#805300}.red{background:#fde8e8;color:#a1242b}.neutral{background:#eee9eb;color:#5e5156}
+.formula{font-size:.8rem;color:var(--muted);margin:9px 0 0}
+.goal{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.82rem}
+.goal label{font-weight:700}
+.goal input{width:94px;min-height:36px;padding:6px 8px;border:1px solid #d9c9ce;border-radius:8px;font-size:.9rem}
+.goal small{color:var(--muted)}
+.roi{border-color:#e9c18f;background:#fffaf4}
+.roi .metric-value{color:#b85c12}
+.alert{padding:11px 13px;border-radius:9px;background:#fff0df;color:#704315;margin:0 0 12px;font-size:.9rem}
+.hidden{display:none}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:4px 0 22px}
+@media(min-width:720px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.results{grid-template-columns:repeat(3,minmax(0,1fr))}.panel{padding:22px}}
+@media(max-width:390px){.results{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.metric-value{font-size:1.55rem}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Calculadora de métricas de email marketing</h1>
+  <p>Registra los resultados de tu campaña, ajusta las metas y consulta el desempeño de forma sencilla.</p>
+</div></header>
+<main class="wrap">
+  <div class="notice"><strong>Datos de demostración ficticios:</strong> los valores iniciales son ejemplos para mostrar cómo funciona la calculadora. Reemplázalos por los datos reales de tu campaña.</div>
+
+  <section class="panel" aria-labelledby="datos-title">
+    <h2 id="datos-title">1. Datos de la campaña</h2>
+    <div class="grid">
+      <div class="field"><label for="entregados">Correos entregados</label><input id="entregados" type="number" min="0" step="1" value="9500"></div>
+      <div class="field"><label for="clics">Clics</label><input id="clics" type="number" min="0" step="1" value="760"></div>
+      <div class="field"><label for="respuestas">Respuestas</label><input id="respuestas" type="number" min="0" step="1" value="190"></div>
+      <div class="field"><label for="conversiones">Conversiones</label><input id="conversiones" type="number" min="0" step="1" value="95"></div>
+      <div class="field"><label for="bajas">Bajas (cancelaciones)</label><input id="bajas" type="number" min="0" step="1" value="38"></div>
+      <div class="field"><label for="spam">Reportes de spam</label><input id="spam" type="number" min="0" step="1" value="5"></div>
+      <div class="field"><label for="inversion">Inversión (COP)</label><input id="inversion" type="number" min="0" step="1000" value="500000"></div>
+      <div class="field"><label for="ingreso">Ingreso por conversión (COP)</label><input id="ingreso" type="number" min="0" step="1000" value="20000"></div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="calcular" type="button">Calcular métricas</button>
+      <button class="secondary" id="limpiar" type="button">Limpiar datos</button>
+      <button class="secondary" id="ejemplo" type="button">Cargar ejemplo ficticio</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="resultados-title">
+    <h2 id="resultados-title">2. Resultados y metas</h2>
+    <div id="alerta" class="alert hidden" role="alert"></div>
+    <div class="results" aria-live="polite">
+      <article class="metric" id="card-clics">
+        <div class="metric-top"><h3>Tasa de clics</h3><span class="status neutral" id="estado-clics">Sin calcular</span></div>
+        <div class="metric-value" id="valor-clics">—</div>
+        <div class="goal"><label for="meta-clics">Meta:</label><input id="meta-clics" type="number" min="0" step="0.1" value="5"><small>% mínimo</small></div>
+        <p class="formula">Fórmula: (clics ÷ correos entregados) × 100.</p>
+      </article>
+      <article class="metric" id="card-respuestas">
+        <div class="metric-top"><h3>Tasa de respuesta</h3><span class="status neutral" id="estado-respuestas">Sin calcular</span></div>
+        <div class="metric-value" id="valor-respuestas">—</div>
+        <div class="goal"><label for="meta-respuestas">Meta:</label><input id="meta-respuestas" type="number" min="0" step="0.1" value="2"><small>% mínimo</small></div>
+        <p class="formula">Fórmula: (respuestas ÷ correos entregados) × 100.</p>
+      </article>
+      <article class="metric" id="card-conversiones">
+        <div class="metric-top"><h3>Tasa de conversión</h3><span class="status neutral" id="estado-conversiones">Sin calcular</span></div>
+        <div class="metric-value" id="valor-conversiones">—</div>
+        <div class="goal"><label for="meta-conversiones">Meta:</label><input id="meta-conversiones" type="number" min="0" step="0.1" value="1"><small>% mínimo</small></div>
+        <p class="formula">Fórmula: (conversiones ÷ correos entregados) × 100.</p>
+      </article>
+      <article class="metric" id="card-bajas">
+        <div class="metric-top"><h3>Tasa de bajas</h3><span class="status neutral" id="estado-bajas">Sin calcular</span></div>
+        <div class="metric-value" id="valor-bajas">—</div>
+        <div class="goal"><label for="meta-bajas">Meta:</label><input id="meta-bajas" type="number" min="0" step="0.1" value="0.5"><small>% máximo</small></div>
+        <p class="formula">Fórmula: (bajas ÷ correos entregados) × 100.</p>
+      </article>
+      <article class="metric" id="card-spam">
+        <div class="metric-top"><h3>Tasa de spam</h3><span class="status neutral" id="estado-spam">Sin calcular</span></div>
+        <div class="metric-value" id="valor-spam">—</div>
+        <div class="goal"><label for="meta-spam">Meta:</label><input id="meta-spam" type="number" min="0" step="0.01" value="0.1"><small>% máximo</small></div>
+        <p class="formula">Fórmula: (reportes de spam ÷ correos entregados) × 100.</p>
+      </article>
+      <article class="metric roi">
+        <div class="metric-top"><h3>Retorno de inversión (ROI)</h3><span class="status neutral" id="estado-roi">Sin calcular</span></div>
+        <div class="metric-value" id="valor-roi">—</div>
+        <p class="formula">Fórmula: [(ingresos totales − inversión) ÷ inversión] × 100. Ingresos totales = conversiones × ingreso por conversión.</p>
+        <p class="formula" id="ingresos-total">Ingresos totales: —</p>
+      </article>
+    </div>
+  </section>
+  <footer>Las metas son editables y sirven como referencia. Ajusta los objetivos según tu campaña y los criterios de tu organización.</footer>
+</main>
+<script>
+const ids = ['entregados','clics','respuestas','conversiones','bajas','spam','inversion','ingreso'];
+const ejemplos = {entregados:9500,clics:760,respuestas:190,conversiones:95,bajas:38,spam:5,inversion:500000,ingreso:20000};
+const cop = n => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(n);
+const num = id => {
+  const el=document.getElementById(id);
+  if(el.value.trim()==='') return null;
+  const v=Number(el.value);
+  return Number.isFinite(v) && v>=0 ? v : null;
+};
+function estado(id, texto, clase){
+  const el=document.getElementById('estado-'+id);
+  el.textContent=texto; el.className='status '+clase;
+}
+function mostrarTasa(id, numerador, entregados, meta, menorEsMejor=false){
+  const valorEl=document.getElementById('valor-'+id);
+  if(entregados===null || entregados===0 || numerador===null){
+    valorEl.textContent='—';
+    estado(id, entregados===0?'Falta denominador':'Dato incompleto','neutral');
+    return;
+  }
+  const tasa=numerador/entregados*100;
+  valorEl.textContent=tasa.toLocaleString('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+  if(meta===null){estado(id,'Define la meta','neutral');return;}
+  let clase, texto;
+  if(menorEsMejor){
+    if(tasa<=meta){clase='green';texto='En meta';}
+    else if(tasa<=meta*1.2){clase='yellow';texto='En observación';}
+    else {clase='red';texto='Fuera de meta';}
+  }else{
+    if(tasa>=meta){clase='green';texto='En meta';}
+    else if(tasa>=meta*0.8){clase='yellow';texto='En observación';}
+    else {clase='red';texto='Fuera de meta';}
+  }
+  estado(id,texto,clase);
+}
+function calcular(){
+  const d=num('entregados');
+  const alerta=document.getElementById('alerta');
+  const mensajes=[];
+  if(d===null) mensajes.push('Ingresa un número válido de correos entregados.');
+  else if(d===0) mensajes.push('No se pueden calcular las tasas: los correos entregados son el denominador y deben ser mayores que cero.');
+  const campos=['clics','respuestas','conversiones','bajas','spam','inversion','ingreso'];
+  campos.forEach(id=>{if(num(id)===null) mensajes.push('Revisa el campo «'+document.querySelector('label[for="'+id+'"]').textContent+'»: debe ser un número igual o mayor que cero.');});
+  alerta.textContent=mensajes.join(' ');
+  alerta.classList.toggle('hidden',mensajes.length===0);
+  const m=id=>num('meta-'+id);
+  ['clics','respuestas','conversiones','bajas','spam'].forEach(id=>{
+    const n=num(id);
+    mostrarTasa(id,n,d,m(id),id==='bajas'||id==='spam');
+  });
+  const inv=num('inversion'), conv=num('conversiones'), ingreso=num('ingreso');
+  const roiEl=document.getElementById('valor-roi');
+  if(inv===null||conv===null||ingreso===null||inv===0){
+    roiEl.textContent='—';
+    estado('roi',inv===0?'Falta denominador':'Dato incompleto','neutral');
+    document.getElementById('ingresos-total').textContent='Ingresos totales: —';
+  }else{
+    const total=conv*ingreso, roi=(total-inv)/inv*100;
+    roiEl.textContent=roi.toLocaleString('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+    estado('roi',roi>=0?'Retorno positivo':'Retorno negativo',roi>=0?'green':'red');
+    document.getElementById('ingresos-total').textContent='Ingresos totales estimados: '+cop(total);
+  }
+}
+document.getElementById('calcular').addEventListener('click',calcular);
+document.getElementById('limpiar').addEventListener('click',()=>{
+  ids.forEach(id=>document.getElementById(id).value='');
+  calcular();
+});
+document.getElementById('ejemplo').addEventListener('click',()=>{
+  ids.forEach(id=>document.getElementById(id).value=ejemplos[id]);
+  calcular();
+});
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',calcular));
+calcular();
+</script>
+</body>
+</html>
